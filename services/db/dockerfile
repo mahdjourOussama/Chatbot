@@ -1,0 +1,16 @@
+FROM postgres:15
+
+# Install required tools and PostgreSQL development headers
+RUN apt-get update && apt-get install -y \
+    wget build-essential postgresql-server-dev-15 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Download and install pgvector
+RUN wget https://github.com/pgvector/pgvector/archive/v0.4.4.tar.gz && \
+    tar -xzvf v0.4.4.tar.gz && \
+    cd pgvector-0.4.4 && \
+    make && \
+    make install
+
+# Initialize the database with pgvector extension
+COPY ./init.sql /docker-entrypoint-initdb.d/
