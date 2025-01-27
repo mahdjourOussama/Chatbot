@@ -1,0 +1,100 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  database:
+    container_name: database
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "10000:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: orchastrator
+    build: ./services/orchastrator
+    ports:
+      - "9000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - ai
+    healthcheck:
+      test: "curl -f http://localhost:9000"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  ai:
+    container_name: ai
+    build: ./services/ai
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      retrival:
+        condition: service_healthy
+
+    healthcheck:
+      test: "curl -f http://localhost:8000"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  retrival:
+    container_name: retrival
+    build: ./services/retrival
+    ports:
+      - "7000:8000"
+    env_file:
+      - .env
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: "curl -f http://localhost:7000"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  ui:
+    container_name: ui
+    build: ./services/ui
+    ports:
+      - "6000:8501"
+    healthcheck:
+      test: "curl -f http://localhost:6000"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      app:
+        condition: service_healthy
+    links:
+      - "app"
+  llm:
+    build: ./services/llm
+    container_name: llm
+    ports:
+      - "5000:8000"
+    healthcheck:
+      test: "curl -f http://localhost:5000"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ollama:/data
+volumes:
+  redis_data:
+  ollama:
