@@ -1,0 +1,20 @@
+FROM python:3.11-slim-buster
+
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies first (cached separately)
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    libpq-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy only requirements.txt and install dependencies (this layer will be cached)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . .
+
+EXPOSE 8000
+CMD [ "fastapi", "run", "app.py"]

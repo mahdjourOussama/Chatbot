@@ -1,0 +1,9 @@
+fastapi[standard]
+langchain_core
+langchain_postgres
+langchain_huggingface 
+langchain-text-splitters
+psycopg2-binary
+requests  
+python-dotenv 
+sqlalchemy
