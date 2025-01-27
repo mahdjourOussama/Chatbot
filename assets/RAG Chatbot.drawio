@@ -1,0 +1,143 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36" version="26.0.9">
+  <diagram name="Page-1" id="5LxXBjriChci7-w3znHk">
+    <mxGraphModel dx="1400" dy="804" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YtnPROR8u5ftzCsDgis--7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--3" target="YtnPROR8u5ftzCsDgis--6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--8" value="Question" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--7">
+          <mxGeometry x="-0.168" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--3" value="UI Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="850" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--4" target="YtnPROR8u5ftzCsDgis--14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1220" y="600" />
+              <mxPoint x="990" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--22" value="vector similarity scores" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--21">
+          <mxGeometry x="0.071" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--4" value="Vectorial Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="480" width="60" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--5" target="YtnPROR8u5ftzCsDgis--6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--13" value="Conversation" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--12">
+          <mxGeometry x="0.2017" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--5" value="Redis Service" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.direct_data;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="1170" y="300" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--6" target="YtnPROR8u5ftzCsDgis--5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--10" value="Conversation ID" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--9">
+          <mxGeometry x="0.06" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--6" target="YtnPROR8u5ftzCsDgis--14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--16" value="question" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--15">
+          <mxGeometry x="-0.1352" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--6" target="YtnPROR8u5ftzCsDgis--24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--26" value="Document context +question" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--25">
+          <mxGeometry x="-0.0267" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--6" target="YtnPROR8u5ftzCsDgis--3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--33" value="Response" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--32">
+          <mxGeometry x="0.1127" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--6" value="Orchastrator Service (APi Gateway)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="850" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--14" target="YtnPROR8u5ftzCsDgis--6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="850" y="570" as="sourcePoint" />
+            <mxPoint x="870" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--18" value="Relevant Documents" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--17">
+          <mxGeometry x="0.5904" y="3" relative="1" as="geometry">
+            <mxPoint x="-37" y="82" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--14" target="YtnPROR8u5ftzCsDgis--4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--20" value="question vector" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--19">
+          <mxGeometry x="0.2087" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--14" value="Retrival Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="930" y="490" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--24" target="YtnPROR8u5ftzCsDgis--27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--29" value="Question" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--28">
+          <mxGeometry x="-0.0583" y="-1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--24" target="YtnPROR8u5ftzCsDgis--6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--35" value="Answer" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--34">
+          <mxGeometry x="-0.1055" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--24" value="AI Service" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="610" y="370" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="YtnPROR8u5ftzCsDgis--27" target="YtnPROR8u5ftzCsDgis--24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="440" />
+              <mxPoint x="670" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--31" value="Answer" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="YtnPROR8u5ftzCsDgis--30">
+          <mxGeometry x="0.1017" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--27" value="LLM Service (OLLAMA)" style="whiteSpace=wrap;html=1;rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="370" y="370" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="YtnPROR8u5ftzCsDgis--36" value="RAG CHATBOT DIagrame" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="610" y="510" width="120" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
