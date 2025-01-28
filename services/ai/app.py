@@ -18,7 +18,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-app = FastAPI()
+app = FastAPI(
+    title="AI Service",
+    description="This service is responsible for generating answers to user questions",
+    version="0.1.0",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -72,7 +76,7 @@ class ChatRequestModel(BaseModel):
 class ChatResponseModel(BaseModel):
     """Chat response model for the AI assistant."""
 
-    reply: str
+    answer: str
     query: str
 
 
@@ -85,7 +89,7 @@ async def chat_conversation(request: ChatRequestModel):
 
         answer = answer_question(query, docs)
 
-        return ChatResponseModel(reply=answer, query=query)
+        return ChatResponseModel(answer=answer, query=query)
 
     except Exception as e:
         logger.error("Error processing conversation: ")
