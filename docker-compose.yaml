@@ -15,6 +15,7 @@ services:
   database:
     build: ./services/db
     container_name: database
+    image: oussamamahjdour/rag-db:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -29,6 +30,7 @@ services:
   app:
     container_name: orchastrator
     build: ./services/orchastrator
+    image: oussamamahjdour/rag-orchastrator:latest
     ports:
       - "9000:8000"
     env_file:
@@ -44,6 +46,7 @@ services:
 
   ai:
     container_name: ai
+    image: oussamamahjdour/rag-ai:latest
     build: ./services/ai
     ports:
       - "8000:8000"
@@ -60,6 +63,7 @@ services:
 
   retrival:
     container_name: retrival
+    image: oussamamahjdour/rag-retrival:latest
     build: ./services/retrival
     ports:
       - "7000:8000"
@@ -77,6 +81,7 @@ services:
   ui:
     container_name: ui
     build: ./services/ui
+    image: oussamamahjdour/rag-ui:latest
     ports:
       - "6000:8501"
     healthcheck:
@@ -93,15 +98,16 @@ services:
   llm:
     build: ./services/llm
     container_name: llm
+    image: oussamamahjdour/rag-llm:latest
     ports:
-      - "5000:8000"
+      - "11434:11434"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000 || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:11434 || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
     volumes:
-      - ollama:/data
+      - ollama:/root/.ollama
 
 volumes:
   redis_data:

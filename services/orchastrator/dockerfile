@@ -4,12 +4,9 @@ WORKDIR /app
 # Copy only requirements.txt and install dependencies (this layer will be cached)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
+COPY . .
 EXPOSE 8000
 CMD [ "fastapi", "run", "app.py"]
 # CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
