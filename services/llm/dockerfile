@@ -1,3 +1,8 @@
 FROM ollama/ollama
 RUN apt-get update && apt-get install -y curl
-RUN nohup bash -c "ollama serve &" && sleep 5 && ollama pull gemma:2b
+
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
