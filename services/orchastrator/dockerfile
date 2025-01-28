@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 EXPOSE 8000
 CMD [ "fastapi", "run", "app.py"]
