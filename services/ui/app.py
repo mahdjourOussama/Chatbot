@@ -3,7 +3,8 @@ import os
 from typing import List
 import requests
 
-CHATBOT_URL = "http://localhost:8000"
+CHATBOT_URL = "http://app:8000"
+# CHATBOT_URL = "http://localhost:9000/"
 
 
 class Collection:
@@ -20,22 +21,31 @@ class Message:
 
 # Function to list all collections
 def list_collections() -> List[Collection]:
-    collections: List[Collection] = [
-        Collection(name=f"collection{i}", id=f"id_{i}") for i in range(1, 8)
-    ]
-    return collections
+    try:
+        response = requests.get(f"{CHATBOT_URL}/collections")
+        if response.status_code == 200:
+            collections = [
+                Collection(name=collection["name"], id=collection["id"])
+                for collection in response.json()
+            ]
+        else:
+            collections = []
+        return collections
+    except Exception as e:
+        st.error(f"Error listing collections: {e}")
+        return []
 
 
 # Main page
 def main():
     st.title("Chatbot Collections")
 
-    collections = list_collections()
+    st.session_state.collections = list_collections()
     upload_files()
-    if collections:
+    if st.session_state.collections:
         st.subheader("Existing Collections")
         cols = st.columns(4)
-        for index, collection in enumerate(collections):
+        for index, collection in enumerate(st.session_state.collections):
             col = cols[index % 4]
             with col:
                 st.button(
@@ -52,27 +62,21 @@ def main():
 
 def upload_files():
     uploaded_files = st.file_uploader(
-        "Upload txt files", type="txt", accept_multiple_files=True
+        "Upload txt files", type="txt", accept_multiple_files=False
     )
     if uploaded_files:
-        os.makedirs("collections", exist_ok=True)
-        for uploaded_file in uploaded_files:
-            with open(os.path.join("collections", uploaded_file.name), "wb") as f:
-                f.write(uploaded_file.getbuffer())
-        st.success("Files uploaded successfully")
-
-        # Send files to backend
         files = [
-            ("files", (file.name, file.getvalue(), "text/plain"))
-            for file in uploaded_files
+            ("files", (uploaded_files.name, uploaded_files.getvalue(), "text/plain"))
         ]
-        response = requests.post(f"{CHATBOT_URL}/upload/", files=files)
-
-        if response.status_code == 200:
-            st.session_state.collections = response.json().get("collections", [])
-            st.success("Collections created successfully")
-        else:
-            st.error("Failed to create collections")
+        try:
+            response = requests.post(f"{CHATBOT_URL}/upload/", files=files)
+            if response.status_code == 200:
+                st.session_state.collections = list_collections()
+                st.success("Collections created successfully")
+            else:
+                st.error("Failed to create collections")
+        except Exception as e:
+            st.error(f"Error uploading files: {e}")
 
 
 # Chat page
@@ -84,23 +88,32 @@ def chat_page():
         st.button(
             "Back to collections", on_click=lambda: st.session_state.pop("collection")
         )
+    response = requests.get(
+        f"{CHATBOT_URL}/collectionChat/{st.session_state.collection.name}"
+    )
+    print(response.json())
     conversation = [
-        Message("Hello, how can I help you?", bot=True),
+        Message(
+            message=message["content"],
+            bot=True if message["role"] == "assistant" else False,
+        )
+        for message in response.json()["conversation"]
+        if message["role"] != "system"
     ]
+    st.session_state.conversation = conversation
     user_input = st.text_input("Ask a question:")
     if user_input:
-        conversation.append(Message(user_input, bot=False))
         response = ask(user_input)
-        conversation.append(response)
-    for message in conversation:
-        display_message(message)
+    if st.session_state.conversation:
+        for message in st.session_state.conversation:
+            display_message(message)
 
 
 def display_message(message: Message):
     if message.bot:
         st.markdown(
             f"""
-            <div style='text-align: left;  padding: 10px; border-radius: 10px; margin: 10px 0;'>
+            <div style='text-align: left;  padding: 10px; border-radius: 10px; margin: 10px 0; background-color: #f6f6f6;  width: 50%;'>
                 <strong>Bot:</strong> {message.message}
             </div>
             """,
@@ -109,26 +122,32 @@ def display_message(message: Message):
     else:
         st.markdown(
             f"""
-            <div style='text-align: right; padding: 10px; border-radius: 10px; margin: 10px 0;'>
-                {message.message}
+            <div style='text-align: left; padding: 10px; border-radius: 10px; margin: 10px 0; background-color: #f0f0f0; width: 50%; float: right;'>
+                <strong>User:</strong> {message.message}
             </div>
             """,
             unsafe_allow_html=True,
         )
 
 
-def ask(qst: str) -> Message:
+def ask(qst: str) -> list:
     response = requests.post(
-        f"{CHATBOT_URL}/ask/{st.session_state.collection.id}",
-        json={"question": qst, "collection_id": st.session_state.collection.id},
+        f"{CHATBOT_URL}/ask/{st.session_state.collection.name}",
+        json={"question": qst, "conversation_id": st.session_state.collection.name},
     )
+    print(response.json())
     if response.status_code == 200:
-        bot_response = Message(
-            response.json().get("answer", "I'm sorry, I don't understand"), bot=True
-        )
+        conversation = [
+            Message(
+                message=message["content"],
+                bot=True if message["role"] == "assistant" else False,
+            )
+            for message in response.json()["conversation"]
+            if message["role"] != "system"
+        ]
+        st.session_state.conversation = conversation
     else:
-        bot_response = Message("Failed to get response from backend", bot=True)
-    return bot_response
+        st.error("Failed to get response")
 
 
 # Routing
