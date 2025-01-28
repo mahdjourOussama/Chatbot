@@ -8,8 +8,8 @@ services:
       - redis_data:/data
 
   database:
+    build: ./services/db
     container_name: database
-    image: postgres:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
