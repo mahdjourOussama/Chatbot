@@ -1,5 +1,4 @@
 import streamlit as st
-import os
 from typing import List
 import requests
 
