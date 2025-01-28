@@ -171,7 +171,7 @@ async def upload_document(file: UploadFile = File(...)):
     try:
         content = await file.read()
         documents = parseUploadFile(content)
-        collection_id = str(uuid4())
+        collection_id = file.filename or str(uuid4())
         store = PGVector(
             embeddings=embeddings,
             collection_name=collection_id,
@@ -181,7 +181,7 @@ async def upload_document(file: UploadFile = File(...)):
         retriever = store.as_retriever()
         documents_id = retriever.add_documents(documents)
         return UpdateCollectionResponse(
-            coollection_id=documents_id, collection_id=collection_id
+            document_ids=documents_id, collection_id=collection_id
         )
     except Exception as e:
         logger.error("Error uploading document")
@@ -221,7 +221,6 @@ except Exception as e:
 class Collection(BaseModel):
     id: str
     name: str
-    metadata: dict
 
 
 @app.get("/collections")
@@ -231,7 +230,8 @@ def get_collections() -> List[Collection]:
         collections = db.query(langchain_pg_collection).all()
         return [
             Collection(
-                id=collection.uuid, name=collection.name, metadata=collection.cmetadata
+                id=str(collection.uuid),
+                name=collection.name,
             )
             for collection in collections
         ]
