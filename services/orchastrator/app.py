@@ -57,7 +57,7 @@ async def get_conversation(conversation_id: str) -> Conversation:
         else:
             return Conversation(
                 conversation=[
-                    {"role": "assistance", "content": "hi how can i help you?"}
+                    {"role": "assistant", "content": "hi how can i help you?"}
                 ]
             )
     except Exception as e:
@@ -67,20 +67,15 @@ async def get_conversation(conversation_id: str) -> Conversation:
 
 class postConversationModel(BaseModel):
     conversation_id: str
-    questoin: str
-
-
-class postConversationResponseModel(BaseModel):
-    conversation_id: str
-    conversation: Conversation
+    question: str
 
 
 @app.post("/ask/{conversation_id}")
 async def post_conversation(
     request: postConversationModel,
-) -> postConversationResponseModel:
+) -> Conversation:
     """Send the conversation to the AI model and return the response."""
-    conversation_id, question = request.conversation_id, request.questoin
+    conversation_id, question = request.conversation_id, request.question
     logger.info("Sending Conversation with ID %s to ", conversation_id)
     try:
         existing_conversation_json = r.get(conversation_id)
@@ -109,7 +104,6 @@ async def post_conversation(
                 "question": question,
                 "docs": docs,
             },
-            timeout=10,
         )
         response.raise_for_status()
         assistant_message = response.json()["answer"]
@@ -120,10 +114,7 @@ async def post_conversation(
 
         r.set(conversation_id, json.dumps(existing_conversation))
 
-        return postConversationResponseModel(
-            conversation_id=conversation_id,
-            conversation=existing_conversation,
-        )
+        return existing_conversation
     except Exception as e:
         logger.error("Error processing conversation %s", e)
         return {"error": e}
@@ -180,23 +171,13 @@ def uploadFiles(files: List[UploadFile] = File(...)) -> UploadResponse:
         return {"error": str(e), "collections": []}
 
 
-class Collection(BaseModel):
-    """Collection model for listing collections."""
-
-    name: str
-    id: str
-
-
 @app.get("/collections")
-def list_collections() -> List[Collection]:
+def list_collections():
     """List all collections."""
     try:
         response = requests.get(f"{RETRIVAL_SERVICE_URL}/collections/")
         response.raise_for_status()
-        return [
-            Collection(id=collection.id, name=collection.name)
-            for collection in response.json()
-        ]
+        return response.json()
     except Exception as e:
         logger.error(f"Error listing collections: {e}")
         return {"error": str(e)}
