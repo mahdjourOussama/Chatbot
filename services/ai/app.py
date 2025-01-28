@@ -1,9 +1,7 @@
 """This Service contains the FastAPI application that will be used to serve the AI model.
 It will accept a conversation and return the response from the AI model."""
 
-import os
 import logging
-from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,14 +12,8 @@ from dotenv import find_dotenv, load_dotenv
 # service setup
 load_dotenv(find_dotenv())
 
-RETRIVAL_SERVICE_URL = (
-    os.getenv("RETRIVAL_SERVICE_URL")
-    if os.getenv("RETRIVAL_SERVICE_URL")
-    else "http://retrieval:8000"
-)
-LLM_SERVICE_URL = (
-    os.getenv("LLM_SERVICE_URL") if os.getenv("LLM_SERVICE_URL") else "http://llm:8000"
-)
+LLM_SERVICE_URL = "http://llm:11434"
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -34,14 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-def format_docs(docs) -> str:
-    """Format the documents for the AI model."""
-    formatted_docs = []
-    for doc in docs:
-        formatted_docs.append(doc["page_content"])
-    return "\n".join(formatted_docs)
 
 
 # Define a function to answer queries
@@ -81,38 +65,29 @@ async def root():
 class ChatRequestModel(BaseModel):
     """Chat conversation model for the AI assistant."""
 
-    conversation_id: str
     question: str
+    docs: str
 
 
 class ChatResponseModel(BaseModel):
     """Chat response model for the AI assistant."""
 
-    conversation_id: str
     reply: str
     query: str
-    context: str
 
 
 @app.post("/ask/{conversation_id}")
 async def chat_conversation(request: ChatRequestModel):
     """Send a conversation to the AI model and return the response."""
     try:
-        conversation_id, query = request.conversation_id, request.question
-
-        docs = requests.post(
-            f"{RETRIVAL_SERVICE_URL}/retrieve_document/",
-            json={"query": query, "collection_id": conversation_id},
-        ).json()["documents"]
-
-        docs = format_docs(docs=docs)
+        query, docs = request.question, request.docs
+        logger.info("Sending conversation with ID  to AI model")
 
         answer = answer_question(query, docs)
 
-        return ChatResponseModel(
-            conversation_id=conversation_id, reply=answer, query=query, context=docs
-        )
+        return ChatResponseModel(reply=answer, query=query)
+
     except Exception as e:
-        logger.error(f"Error processing conversation: {conversation_id}")
+        logger.error("Error processing conversation: ")
         logger.error(e)
         return {"error": str(e)}
