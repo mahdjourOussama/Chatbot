@@ -8,13 +8,18 @@ import requests
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from uuid import uuid4
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 r = redis.Redis(host="redis", port=6379, db=0)
 
-app = FastAPI()
+app = FastAPI(
+    title="Chatbot Service",
+    description="This service is responsible for managing chatbot conversations",
+    version="0.1.0",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,7 +28,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-RETRIVAL_SERVICE_URL = "http://retrieval:8000"
+RETRIVAL_SERVICE_URL = "http://retrival:8000"
 AI_SERVICE_URL = "http://ai:8000"
 
 
@@ -50,7 +55,11 @@ async def get_conversation(conversation_id: str) -> Conversation:
             existing_conversation = json.loads(existing_conversation_json)  # type: ignore
             return existing_conversation
         else:
-            return {"error": "Conversation not found"}
+            return Conversation(
+                conversation=[
+                    {"role": "assistance", "content": "hi how can i help you?"}
+                ]
+            )
     except Exception as e:
         logger.error("Error retrieving conversation %s", e)
         return {"error": e}
@@ -63,7 +72,7 @@ class postConversationModel(BaseModel):
 
 class postConversationResponseModel(BaseModel):
     conversation_id: str
-    answer: str
+    conversation: Conversation
 
 
 @app.post("/ask/{conversation_id}")
@@ -87,12 +96,18 @@ async def post_conversation(
         existing_conversation["conversation"].append(
             {"role": "user", "content": question}
         )
+        docs = requests.post(
+            f"{RETRIVAL_SERVICE_URL}/retrieve_document/",
+            json={"query": question, "collection_id": conversation_id},
+        ).json()["documents"]
+        docs = format_docs(docs=docs)
 
         response = requests.post(
             f"{AI_SERVICE_URL}/ask/{conversation_id}",
             json={
                 "conversation_id": conversation_id,
                 "question": question,
+                "docs": docs,
             },
             timeout=10,
         )
@@ -107,11 +122,19 @@ async def post_conversation(
 
         return postConversationResponseModel(
             conversation_id=conversation_id,
-            response=assistant_message,
+            conversation=existing_conversation,
         )
     except Exception as e:
         logger.error("Error processing conversation %s", e)
         return {"error": e}
+
+
+def format_docs(docs) -> str:
+    """Format the documents for the AI model."""
+    formatted_docs = []
+    for doc in docs:
+        formatted_docs.append(doc["page_content"])
+    return "\n".join(formatted_docs)
 
 
 @app.get("/")
@@ -122,12 +145,6 @@ def read_root():
     }
 
 
-class UploadRequest(BaseModel):
-    """Request model for uploading files."""
-
-    files: List[UploadFile]
-
-
 class UploadResponse(BaseModel):
     """Response model for uploading files."""
 
@@ -135,17 +152,51 @@ class UploadResponse(BaseModel):
 
 
 @app.post("/upload")
-def uploadFiles(request: UploadRequest):
+def uploadFiles(files: List[UploadFile] = File(...)) -> UploadResponse:
     """Upload files to the service."""
     try:
         # Create a new collection
         collections = []
-        for file in request.files:
-            response = requests.post(
-                f"{RETRIVAL_SERVICE_URL}/upload_document/", json={"file": file}
-            )
-            collections._SERVICEappend(response.json().get("collection_id"))
-        return
+        for file in files:
+            if not file.filename.endswith(".txt"):
+                return {"error": "Only .txt files are allowed", collections: []}
+
+            logger.info("Uploading file %s", file.filename)
+            with file.file as file_content:
+                collection_id = file.filename if file.filename else str(uuid4())
+                payload = {
+                    "collection_id": collection_id,
+                    "document_text": file_content.read().decode("utf-8"),
+                }
+                response = requests.post(
+                    f"{RETRIVAL_SERVICE_URL}/save_document/",
+                    json=payload,
+                )
+                response.raise_for_status()  # Ensure the request succeeded
+                collections.append(response.json().get("collection_id"))
+        return UploadResponse(collections=collections)
     except Exception as e:
         logger.error(f"Error uploading files: {e}")
+        return {"error": str(e), "collections": []}
+
+
+class Collection(BaseModel):
+    """Collection model for listing collections."""
+
+    name: str
+    id: str
+
+
+@app.get("/collections")
+def list_collections() -> List[Collection]:
+    """List all collections."""
+    try:
+        response = requests.get(f"{RETRIVAL_SERVICE_URL}/collections/")
+        response.raise_for_status()
+        return [
+            Collection(id=collection.id, name=collection.name)
+            for collection in response.json()
+        ]
+    except Exception as e:
+        logger.error(f"Error listing collections: {e}")
         return {"error": str(e)}

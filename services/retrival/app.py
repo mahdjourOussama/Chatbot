@@ -68,7 +68,7 @@ class UpdateCollectionRequest(BaseModel):
     """Request model for updating a collection."""
 
     collection_id: Optional[str]
-    documents: List[Document]
+    document_text: str
 
 
 class UpdateCollectionResponse(BaseModel):
@@ -90,8 +90,9 @@ def read_root():
 def save_document(request: UpdateCollectionRequest):
     """Update a document in the database."""
     collection_id = request.collection_id or str(uuid4())
-    documents = request.documents
+    documents = text_to_documents(request.document_text, {"file": collection_id})
     try:
+        logger.info("Updating collection %s", collection_id)
         store = PGVector(
             embeddings=embeddings,
             collection_name=collection_id,
@@ -130,6 +131,7 @@ class RetriveDocumentResponse(BaseModel):
 def retrieve_document(request: RetriveDocumentRequest) -> RetriveDocumentResponse:
     """Retrieve a document from the database."""
     try:
+        logger.info("Retrieving document %s", request.collection_id)
         store = PGVector(
             embeddings=embeddings,
             collection_name=request.collection_id,
@@ -161,6 +163,8 @@ def text_to_documents(text: str, metadata: dict) -> List[Document]:
 
 
 def parseUploadFile(file_content: bytes) -> List[Document]:
+    """Parse the content of an uploaded file into a list of Document objects."""
+    logger.info("Parsing uploaded file")
     text = file_content.decode("utf-8")
     return text_to_documents(text, {})
 
@@ -172,6 +176,7 @@ async def upload_document(file: UploadFile = File(...)):
         content = await file.read()
         documents = parseUploadFile(content)
         collection_id = file.filename or str(uuid4())
+        logger.info("Uploading document %s", collection_id)
         store = PGVector(
             embeddings=embeddings,
             collection_name=collection_id,
@@ -226,6 +231,7 @@ class Collection(BaseModel):
 @app.get("/collections")
 def get_collections() -> List[Collection]:
     try:
+        logger.info("Retrieving collections")
         db = SessionLocal()
         collections = db.query(langchain_pg_collection).all()
         return [
