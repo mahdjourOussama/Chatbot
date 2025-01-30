@@ -112,11 +112,37 @@ To get started with the project:
 
 ---
 
+## Screenshots
+
+Below are some screenshots from the project:
+
+- **Building the images**
+  ![Building the images](./assets/screenshot-build.png)
+- **Containers Created**
+  ![Containers Created](./assets/screenshot-created.png)
+- **Services Logs**
+  ![Services Logs](./assets/screenshot-logs.png)
+- **Docker Desktop**
+  ![Docker](./assets/screenshot-docker.png)
+- **Main Application**
+  ![Docker](./assets/screenshot-home.png)
+- **Start Chat with exesting Document**
+  ![Docker](./assets/screenshot-empty-conversation.png)
+- **Chat interface**
+  ![Docker](./assets/screenshot-conversation.png)
+- **Chat Loading response**
+  ![Docker](./assets/screenshot-loading.png)
+- **Upload Document**
+  ![Docker](./assets/screenshot-upload.png)
+- **Document Uploaded**
+  ![Docker](./assets/screenshot-uploaded.png)
+
 ## Demo
 
 Check out our live demo video to see the Chatbot SaaS in action:
 
-[![Watch the video](./assets/demo_thumbnail.png)](./assets/demo_video.mp4)
+[![Watch the video](./assets/logo.webp)](./assets/demo.mp4)
+[![Watch the video](./assets/logo.webp)](./assets/demo-2.mp4)
 
 Click the image above to watch the demo video.
 
