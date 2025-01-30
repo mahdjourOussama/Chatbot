@@ -6,7 +6,7 @@ A chatbot application leveraging a Retrieval-Augmented Generation (RAG) system, 
 
 ## Architecture Overview
 
-![Architecture Diagram](./assets/structure.png)
+![Architecture Diagram](./assets/RAG%20Chatbot.png.png)
 
 The system is divided into six primary containers to handle distinct responsibilities effectively:
 
