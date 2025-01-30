@@ -73,7 +73,7 @@ class postConversationModel(BaseModel):
 @app.post("/ask/{conversation_id}")
 async def post_conversation(
     request: postConversationModel,
-) -> Conversation:
+) -> Message:
     """Send the conversation to the AI model and return the response."""
     conversation_id, question = request.conversation_id, request.question
     logger.info("Sending Conversation with ID %s to ", conversation_id)
@@ -107,14 +107,12 @@ async def post_conversation(
         )
         response.raise_for_status()
         assistant_message = response.json()["answer"]
-
-        existing_conversation["conversation"].append(
-            {"role": "assistant", "content": assistant_message}
-        )
+        bot_message = {"role": "assistant", "content": assistant_message}
+        existing_conversation["conversation"].append(bot_message)
 
         r.set(conversation_id, json.dumps(existing_conversation))
 
-        return existing_conversation
+        return bot_message
     except Exception as e:
         logger.error("Error processing conversation %s", e)
         return {"error": e}

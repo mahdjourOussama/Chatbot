@@ -1,6 +1,7 @@
 import streamlit as st
 from typing import List
 import requests
+import time
 
 CHATBOT_URL = "http://app:8000"
 # CHATBOT_URL = "http://localhost:9000/"
@@ -12,13 +13,6 @@ class Collection:
         self.id = id
 
 
-class Message:
-    def __init__(self, message: str, bot: bool):
-        self.message = message
-        self.bot = bot
-
-
-# Function to list all collections
 def list_collections() -> List[Collection]:
     try:
         response = requests.get(f"{CHATBOT_URL}/collections")
@@ -48,7 +42,7 @@ def main():
             col = cols[index % 4]
             with col:
                 st.button(
-                    f"{collection.name} (ID: {collection.id})",
+                    f"{collection.name}",
                     key=collection.id,
                     on_click=lambda c=collection: st.session_state.update(
                         {"collection": c}
@@ -90,63 +84,43 @@ def chat_page():
     response = requests.get(
         f"{CHATBOT_URL}/collectionChat/{st.session_state.collection.name}"
     )
-    print(response.json())
     conversation = [
-        Message(
-            message=message["content"],
-            bot=True if message["role"] == "assistant" else False,
-        )
+        message
         for message in response.json()["conversation"]
         if message["role"] != "system"
     ]
     st.session_state.conversation = conversation
-    user_input = st.text_input("Ask a question:")
-    if user_input:
-        response = ask(user_input)
     if st.session_state.conversation:
-        for message in st.session_state.conversation:
-            display_message(message)
+        chat_container = st.container(border=True, height=450)
+        with chat_container:
+            for idx, message in enumerate(st.session_state.conversation):
+                with st.chat_message(message["role"]):
+                    if idx == len(st.session_state.conversation) - 1:
+                        st.write_stream(stream_response(message["content"]))
+                    else:
+                        st.markdown(message["content"])
+    st.text_input("Ask a question:", key="user_input", on_change=ask)
 
 
-def display_message(message: Message):
-    if message.bot:
-        st.markdown(
-            f"""
-            <div style='text-align: left;  padding: 10px; border-radius: 10px; margin: 10px 0; background-color: #f6f6f6;  width: 50%;'>
-                <strong>Bot:</strong> {message.message}
-            </div>
-            """,
-            unsafe_allow_html=True,
+def ask():
+    with st.spinner("Analyzing... Please wait..."):
+        qst = st.session_state.user_input
+        response = requests.post(
+            f"{CHATBOT_URL}/ask/{st.session_state.collection.name}",
+            json={"question": qst, "conversation_id": st.session_state.collection.name},
         )
-    else:
-        st.markdown(
-            f"""
-            <div style='text-align: left; padding: 10px; border-radius: 10px; margin: 10px 0; background-color: #f0f0f0; width: 50%; float: right;'>
-                <strong>User:</strong> {message.message}
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        if response.status_code == 200:
+            bot_response = response.json()
+            st.session_state.conversation.append(bot_response)
+            st.session_state.user_input = ""
+        else:
+            st.error("Failed to get response")
 
 
-def ask(qst: str) -> list:
-    response = requests.post(
-        f"{CHATBOT_URL}/ask/{st.session_state.collection.name}",
-        json={"question": qst, "conversation_id": st.session_state.collection.name},
-    )
-    print(response.json())
-    if response.status_code == 200:
-        conversation = [
-            Message(
-                message=message["content"],
-                bot=True if message["role"] == "assistant" else False,
-            )
-            for message in response.json()["conversation"]
-            if message["role"] != "system"
-        ]
-        st.session_state.conversation = conversation
-    else:
-        st.error("Failed to get response")
+def stream_response(response):
+    for word in response.split():
+        yield word + " "
+        time.sleep(0.05)
 
 
 # Routing
