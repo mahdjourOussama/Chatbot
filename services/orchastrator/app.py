@@ -66,6 +66,7 @@ async def get_conversation(conversation_id: str) -> Conversation:
 
 
 class postConversationModel(BaseModel):
+    model: str
     conversation_id: str
     question: str
 
@@ -75,7 +76,7 @@ async def post_conversation(
     request: postConversationModel,
 ) -> Message:
     """Send the conversation to the AI model and return the response."""
-    conversation_id, question = request.conversation_id, request.question
+    conversation_id, question, model = request.conversation_id, request.question, request.model
     logger.info("Sending Conversation with ID %s to ", conversation_id)
     try:
         existing_conversation_json = r.get(conversation_id)
@@ -103,6 +104,7 @@ async def post_conversation(
                 "conversation_id": conversation_id,
                 "question": question,
                 "docs": docs,
+                "model": model,
             },
         )
         response.raise_for_status()

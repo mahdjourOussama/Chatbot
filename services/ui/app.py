@@ -6,6 +6,7 @@ import time
 CHATBOT_URL = "http://app:8000"
 # CHATBOT_URL = "http://localhost:9000/"
 
+MODELS = ["gemma:2b", "deepseek-r1:1.5b", "llama3.2:1b"]
 
 class Collection:
     def __init__(self, name: str, id: str):
@@ -32,6 +33,9 @@ def list_collections() -> List[Collection]:
 # Main page
 def main():
     st.title("Chatbot Collections")
+           
+    # Added a selector of the llm
+    st.session_state.selected_model = st.selectbox("Select the model you want to use",MODELS)
 
     st.session_state.collections = list_collections()
     upload_files()
@@ -107,7 +111,7 @@ def ask():
         qst = st.session_state.user_input
         response = requests.post(
             f"{CHATBOT_URL}/ask/{st.session_state.collection.name}",
-            json={"question": qst, "conversation_id": st.session_state.collection.name},
+            json={"question": qst, "conversation_id": st.session_state.collection.name,"model":st.session_state.selected_model},
         )
         if response.status_code == 200:
             bot_response = response.json()
