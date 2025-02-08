@@ -33,7 +33,7 @@ app.add_middleware(
 
 
 # Define a function to answer queries
-def answer_question(question, docs) -> str:
+def answer_question(question, docs, model) -> str:
     try:
         context = f"""You are an AI assistant with access to a collection of relevant documents. 
 Use the following information to provide accurate and helpful responses to user questions:
@@ -45,8 +45,8 @@ Based on the above information, please provide the most suitable and detailed re
 {question}
 </question>
 """
-
-        generate_payload = {"model": "gemma:2b", "prompt": context, "stream": False}
+        # Model parametrization
+        generate_payload = {"model": model, "prompt": context, "stream": False}
         response = requests.post(
             f"{LLM_SERVICE_URL}/api/generate", json=generate_payload
         )
@@ -68,7 +68,7 @@ async def root():
 
 class ChatRequestModel(BaseModel):
     """Chat conversation model for the AI assistant."""
-
+    model: str
     question: str
     docs: str
 
@@ -84,10 +84,10 @@ class ChatResponseModel(BaseModel):
 async def chat_conversation(request: ChatRequestModel):
     """Send a conversation to the AI model and return the response."""
     try:
-        query, docs = request.question, request.docs
+        query, docs, model = request.question, request.docs, request.model
         logger.info("Sending conversation with ID  to AI model")
 
-        answer = answer_question(query, docs)
+        answer = answer_question(query, docs, model)
 
         return ChatResponseModel(answer=answer, query=query)
 
